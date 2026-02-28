@@ -144,6 +144,8 @@ curl -X POST "http://localhost:8000/api/route/?format=map" \
 2. URL: `http://localhost:8000/api/route/?format=map`
 3. Body (raw JSON): `{"start": "Los Angeles, CA", "finish": "New York, NY"}`
 4. Click Send - the map will display in the response preview
+   
+- You may import the `postman_collection.json` file 
 
 Or visit in browser: `http://localhost:8000/api/route/?format=map` (POST form data)
 
