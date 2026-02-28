@@ -3,6 +3,12 @@ from rest_framework import serializers
 class RouteRequestSerializer(serializers.Serializer):
     start = serializers.CharField(max_length=200, help_text="Start location in USA")
     finish = serializers.CharField(max_length=200, help_text="Finish location in USA")
+    
+    def validate_start(self, value):
+        return value.strip().title()
+    
+    def validate_finish(self, value):
+        return value.strip().title()
 
 class FuelStopSerializer(serializers.Serializer):
     name = serializers.CharField()
