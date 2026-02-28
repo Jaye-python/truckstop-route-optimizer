@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fuel-Optimized Route Planner</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 600px; 
+            margin: 50px auto; 
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { 
+            color: #007bff; 
+            margin: 0 0 10px 0;
+        }
+        p { 
+            color: #666; 
+            margin: 0 0 30px 0;
+        }
+        .form-group { 
+            margin: 20px 0; 
+        }
+        label { 
+            display: block; 
+            margin-bottom: 5px; 
+            font-weight: bold;
+            color: #333;
+        }
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            border: 2px solid #ddd; 
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        button { 
+            width: 100%;
+            padding: 15px; 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover { 
+            background: #0056b3; 
+        }
+        .example {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .example strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚗 Fuel-Optimized Route Planner</h1>
+        <p>Find the cheapest fuel stops along your route</p>
+        
+        <form method="POST" action="/api/route/?format=map">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="start">Start Location</label>
+                <input type="text" id="start" name="start" placeholder="e.g., Los Angeles, CA" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="finish">Finish Location</label>
+                <input type="text" id="finish" name="finish" placeholder="e.g., New York, NY" required>
+            </div>
+            
+            <button type="submit">🗺️ Plan Route & Show Map</button>
+        </form>
+        
+        <div class="example">
+            <strong>Example Routes:</strong>
+            • Los Angeles, CA → New York, NY<br>
+            • Chicago, IL → Miami, FL<br>
+            • Seattle, WA → Boston, MA
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fuel-Optimized Route Planner</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        #map { height: 500px; width: 100%; margin: 20px 0; }
+        .form-group { margin: 10px 0; }
+        input { padding: 8px; width: 300px; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        #results { margin-top: 20px; }
+        .fuel-stop { background: #f8f9fa; padding: 10px; margin: 5px 0; border-left: 3px solid #28a745; }
+        .error { color: red; }
+        .loading { color: #666; }
+    </style>
+</head>
+<body>
+    <h1>🚗 Fuel-Optimized Route Planner</h1>
+    
+    <div class="form-group">
+        <input type="text" id="start" placeholder="Start location (e.g., Los Angeles, CA)" value="Los Angeles, CA">
+    </div>
+    <div class="form-group">
+        <input type="text" id="finish" placeholder="Finish location (e.g., New York, NY)" value="New York, NY">
+    </div>
+    <button onclick="planRoute()">Plan Route</button>
+    
+    <div id="map"></div>
+    <div id="results"></div>
+
+    <script>
+        const map = L.map('map').setView([39.8283, -98.5795], 4);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        let routeLayer = null;
+        let markers = [];
+
+        async function planRoute() {
+            const start = document.getElementById('start').value;
+            const finish = document.getElementById('finish').value;
+            const resultsDiv = document.getElementById('results');
+            
+            resultsDiv.innerHTML = '<p class="loading">Planning route...</p>';
+            
+            // Clear previous route and markers
+            if (routeLayer) map.removeLayer(routeLayer);
+            markers.forEach(m => map.removeLayer(m));
+            markers = [];
+
+            try {
+                const response = await fetch('http://localhost:8000/api/route/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ start, finish })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to plan route');
+                }
+
+                const data = await response.json();
+                
+                // Draw route
+                const coords = data.route_geometry.coordinates.map(c => [c[1], c[0]]);
+                routeLayer = L.polyline(coords, { color: 'blue', weight: 3 }).addTo(map);
+                map.fitBounds(routeLayer.getBounds());
+
+                // Add fuel stop markers
+                data.fuel_stops.forEach((stop, i) => {
+                    const marker = L.marker([stop.lat, stop.lon])
+                        .bindPopup(`<b>Stop ${i+1}: ${stop.name}</b><br>${stop.city}, ${stop.state}<br>$${stop.price}/gal`)
+                        .addTo(map);
+                    markers.push(marker);
+                });
+
+                // Display results
+                let html = `
+                    <h3>Route Summary</h3>
+                    <p><strong>Distance:</strong> ${data.distance_miles} miles</p>
+                    <p><strong>Total Gallons:</strong> ${data.total_gallons} gal (@ 10 MPG)</p>
+                    <p><strong>Total Fuel Cost:</strong> $${data.total_fuel_cost}</p>
+                    <h4>Fuel Stops (${data.fuel_stops.length})</h4>
+                `;
+                
+                data.fuel_stops.forEach((stop, i) => {
+                    html += `
+                        <div class="fuel-stop">
+                            <strong>Stop ${i+1}:</strong> ${stop.name}<br>
+                            ${stop.city}, ${stop.state}<br>
+                            <strong>Price:</strong> $${stop.price}/gal
+                        </div>
+                    `;
+                });
+
+                resultsDiv.innerHTML = html;
+
+            } catch (error) {
+                resultsDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

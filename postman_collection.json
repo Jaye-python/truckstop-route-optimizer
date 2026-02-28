@@ -1,0 +1,90 @@
+{
+  "info": {
+    "name": "Fuel-Optimized Route Planner API",
+    "description": "API for calculating optimal fuel stops along routes",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get Route (JSON)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"start\": \"Los Angeles, CA\",\n  \"finish\": \"New York, NY\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8000/api/route/",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "route", ""]
+        }
+      }
+    },
+    {
+      "name": "Get Route with Map (HTML)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"start\": \"Los Angeles, CA\",\n  \"finish\": \"New York, NY\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8000/api/route/?format=map",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "route", ""],
+          "query": [
+            {
+              "key": "format",
+              "value": "map"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Chicago to Miami (Map)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"start\": \"Chicago, IL\",\n  \"finish\": \"Miami, FL\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8000/api/route/?format=map",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "route", ""],
+          "query": [
+            {
+              "key": "format",
+              "value": "map"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

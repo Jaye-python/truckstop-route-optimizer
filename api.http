@@ -1,0 +1,49 @@
+### Fuel-Optimized Route Planner API
+### API for calculating optimal fuel stops along routes
+
+@baseUrl = http://localhost:8000
+
+### Get Route (JSON)
+POST {{baseUrl}}/api/route/
+Content-Type: application/json
+
+{
+  "start": "Los Angeles, CA",
+  "finish": "New York, NY"
+}
+
+### Get Route with Map (HTML)
+POST {{baseUrl}}/api/route/?format=map
+Content-Type: application/json
+
+{
+  "start": "Los Angeles, CA",
+  "finish": "New York, NY"
+}
+
+### Chicago to Miami (Map)
+POST {{baseUrl}}/api/route/?format=map
+Content-Type: application/json
+
+{
+  "start": "Chicago, IL",
+  "finish": "Miami, FL"
+}
+
+### San Francisco to Seattle (JSON)
+POST {{baseUrl}}/api/route/
+Content-Type: application/json
+
+{
+  "start": "San Francisco, CA",
+  "finish": "Seattle, WA"
+}
+
+### Dallas to Denver (Map)
+POST {{baseUrl}}/api/route/?format=map
+Content-Type: application/json
+
+{
+  "start": "Dallas, TX",
+  "finish": "Denver, CO"
+}

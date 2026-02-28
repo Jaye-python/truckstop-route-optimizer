@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Route Map - {{ start }} to {{ finish }}</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        #map { height: 70vh; width: 100%; }
+        .info-panel { padding: 20px; background: #f8f9fa; }
+        .info-panel h1 { margin: 0 0 10px 0; font-size: 24px; }
+        .summary { display: flex; gap: 30px; margin: 15px 0; }
+        .summary-item { background: white; padding: 15px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .summary-item strong { display: block; color: #666; font-size: 12px; margin-bottom: 5px; }
+        .summary-item span { font-size: 24px; color: #007bff; font-weight: bold; }
+        .fuel-stops { margin-top: 20px; }
+        .fuel-stop { background: white; padding: 10px; margin: 5px 0; border-left: 3px solid #28a745; display: flex; justify-content: space-between; align-items: center; }
+        .stop-info { flex: 1; }
+        .stop-price { font-size: 18px; color: #28a745; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="info-panel">
+        <h1>🚗 {{ start }} → {{ finish }}</h1>
+        <div class="summary">
+            <div class="summary-item">
+                <strong>DISTANCE</strong>
+                <span>{{ distance_miles }} mi</span>
+            </div>
+            <div class="summary-item">
+                <strong>FUEL NEEDED</strong>
+                <span>{{ total_gallons }} gal</span>
+            </div>
+            <div class="summary-item">
+                <strong>TOTAL COST</strong>
+                <span>${{ total_fuel_cost }}</span>
+            </div>
+            <div class="summary-item">
+                <strong>FUEL STOPS</strong>
+                <span>{{ fuel_stops|length }}</span>
+            </div>
+        </div>
+        
+        {% if fuel_stops %}
+        <div class="fuel-stops">
+            <h3>⛽ Fuel Stops</h3>
+            {% for stop in fuel_stops %}
+            <div class="fuel-stop">
+                <div class="stop-info">
+                    <strong>{{ forloop.counter }}. {{ stop.name }}</strong><br>
+                    <small>{{ stop.city }}, {{ stop.state }}</small>
+                </div>
+                <div class="stop-price">${{ stop.price }}/gal</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    
+    <div id="map"></div>
+
+    <script>
+        const map = L.map('map');
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Draw route
+        const routeCoords = {{ route_coords|safe }};
+        const routeLine = L.polyline(routeCoords, { 
+            color: '#007bff', 
+            weight: 4,
+            opacity: 0.7
+        }).addTo(map);
+        
+        // Add start marker
+        L.marker(routeCoords[0], {
+            icon: L.divIcon({
+                html: '🏁',
+                className: 'emoji-marker',
+                iconSize: [30, 30]
+            })
+        }).bindPopup('<b>Start:</b> {{ start }}').addTo(map);
+        
+        // Add end marker
+        L.marker(routeCoords[routeCoords.length - 1], {
+            icon: L.divIcon({
+                html: '🏁',
+                className: 'emoji-marker',
+                iconSize: [30, 30]
+            })
+        }).bindPopup('<b>Finish:</b> {{ finish }}').addTo(map);
+
+        // Add fuel stop markers
+        {% for stop in fuel_stops %}
+        L.marker([{{ stop.lat }}, {{ stop.lon }}], {
+            icon: L.divIcon({
+                html: '⛽',
+                className: 'emoji-marker',
+                iconSize: [30, 30]
+            })
+        }).bindPopup(`
+            <b>Stop {{ forloop.counter }}: {{ stop.name }}</b><br>
+            {{ stop.city }}, {{ stop.state }}<br>
+            <strong>Price:</strong> ${{ stop.price }}/gal
+        `).addTo(map);
+        {% endfor %}
+
+        // Fit map to route bounds
+        map.fitBounds(routeLine.getBounds(), { padding: [50, 50] });
+    </script>
+</body>
+</html>
