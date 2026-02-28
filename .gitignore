@@ -17,6 +17,9 @@ staticfiles/
 # Geocoded cache
 *_geocoded.json
 
+# Documentation
+IMPLEMENTATION.md
+
 # IDE
 .vscode/
 .idea/
