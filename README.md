@@ -130,10 +130,3 @@ Interactive API documentation is available at:
 - **ReDoc**: http://localhost:8000/api/redoc/
 - **OpenAPI Schema**: http://localhost:8000/api/schema/
 
-## Demo Page
-
-Open `demo.html` in your browser to use the interactive map interface:
-1. Make sure the server is running
-2. Open `demo.html` in a web browser
-3. Enter start and finish locations
-4. Click "Plan Route" to see the route and fuel stops on the map
